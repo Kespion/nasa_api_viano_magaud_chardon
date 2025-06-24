@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../models/manifest.dart';
 import '../models/photo.dart';
 
 class NasaApiService {
-  static const String _apiKey = 'y0woC3dtOgOM1TxSgAyNybXwz5YPGNp7CZeiwKgX';
-  static const String _baseUrl = 'https://api.nasa.gov/mars-photos/api/v1';
+  static final String _apiKey = dotenv.env['API_KEY']!;
+  static final String _baseUrl = dotenv.env['BASE_URL']!;
 
   static Future<Manifest> fetchManifest(String rover) async {
     final url = Uri.parse('$_baseUrl/manifests/$rover?api_key=$_apiKey');
