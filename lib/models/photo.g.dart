@@ -9,7 +9,7 @@ part of 'photo.dart';
 Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
       id: (json['id'] as num).toInt(),
       sol: (json['sol'] as num).toInt(),
-      imgSrc: json['img_src'] as String,
+      imgSrc: json['img_src'] as String?,
       earthDate: json['earth_date'] as String,
       camera: Camera.fromJson(json['camera'] as Map<String, dynamic>),
     );
@@ -24,10 +24,8 @@ Map<String, dynamic> _$PhotoToJson(Photo instance) => <String, dynamic>{
 
 Camera _$CameraFromJson(Map<String, dynamic> json) => Camera(
       name: json['name'] as String,
-      fullName: json['fullName'] as String,
     );
 
 Map<String, dynamic> _$CameraToJson(Camera instance) => <String, dynamic>{
       'name': instance.name,
-      'fullName': instance.fullName,
     };

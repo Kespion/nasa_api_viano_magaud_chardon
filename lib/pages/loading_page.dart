@@ -4,7 +4,7 @@ import 'home_page.dart';
 import '../providers/rover_provider.dart';
 
 class LoadingPage extends StatefulWidget {
-  const LoadingPage({super.key});
+  const LoadingPage(String s, {super.key});
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();

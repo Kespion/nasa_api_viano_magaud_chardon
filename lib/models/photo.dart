@@ -7,15 +7,16 @@ class Photo {
   @JsonKey(name: 'sol')
   final int sol;
   @JsonKey(name: 'img_src')
-  final String imgSrc;
+  final String? imgSrc;
   @JsonKey(name: 'earth_date')
   final String earthDate;
+  @JsonKey(name: 'camera')
   final Camera camera;
 
   Photo({
     required this.id,
     required this.sol,
-    required this.imgSrc,
+    this.imgSrc,
     required this.earthDate,
     required this.camera,
   });
@@ -26,10 +27,10 @@ class Photo {
 
 @JsonSerializable()
 class Camera {
+  @JsonKey(name: 'name')
   final String name;
-  final String fullName;
 
-  Camera({required this.name, required this.fullName});
+  Camera({required this.name});
 
   factory Camera.fromJson(Map<String, dynamic> json) => _$CameraFromJson(json);
   Map<String, dynamic> toJson() => _$CameraToJson(this);

@@ -13,9 +13,8 @@ class PhotosPage extends StatefulWidget {
 }
 
 class _PhotosPageState extends State<PhotosPage> {
-  final ScrollController _scrollController = ScrollController();
-  final int _batchSize = 20;
-  int _visibleCount = 0;
+  final int _pageSize = 25;
+  int _currentPage = 0;
   bool _isLoading = true;
   List<Photo> _photos = [];
 
@@ -33,30 +32,14 @@ class _PhotosPageState extends State<PhotosPage> {
 
     setState(() {
       _photos = photos;
-      _visibleCount = (_batchSize < _photos.length) ? _batchSize : _photos.length;
       _isLoading = false;
     });
-
-    _scrollController.addListener(_onScroll);
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
-      final nextCount = _visibleCount + _batchSize;
-      final max = _photos.length;
-
-      if (_visibleCount >= max) return;
-
-      setState(() {
-        _visibleCount = nextCount < max ? nextCount : max;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  List<Photo> get _paginatedPhotos {
+    final start = _currentPage * _pageSize;
+    final end = (_currentPage + 1) * _pageSize;
+    return _photos.sublist(start, end > _photos.length ? _photos.length : end);
   }
 
   @override
@@ -76,30 +59,93 @@ class _PhotosPageState extends State<PhotosPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Photos du Sol ${widget.sol}")),
-      body: GridView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: _visibleCount,
-        itemBuilder: (context, index) {
-          final photo = _photos[index];
-          return GridTile(
-            footer: Container(
-              color: Colors.black54,
-              padding: const EdgeInsets.all(4),
-              child: Text(
-                photo.camera.fullName,
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-                overflow: TextOverflow.ellipsis,
-              ),
+      body: Column(
+        children: [
+          Text("Page ${_currentPage + 1} / ${(_photos.length / _pageSize).ceil()}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              itemCount: _paginatedPhotos.length,
+              itemBuilder: (context, index) {
+                final photo = _paginatedPhotos[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: AspectRatio(
+                    aspectRatio: 1.5,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            photo.imgSrc ?? '',
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(child: Icon(Icons.error, color: Colors.red));
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            color: Colors.black54,
+                            padding: const EdgeInsets.all(4),
+                            child: Text(
+                              photo.camera.name,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            child: Image.network(photo.imgSrc, fit: BoxFit.cover),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: _currentPage > 0
+                      ? () {
+                    setState(() {
+                      _currentPage--;
+                    });
+                  }
+                      : null,
+                  child: const Text("Previous"),
+                ),
+                ElevatedButton(
+                  onPressed: (_currentPage + 1) * _pageSize < _photos.length
+                      ? () {
+                    setState(() {
+                      _currentPage++;
+                    });
+                  }
+                      : null,
+                  child: const Text("Next"),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

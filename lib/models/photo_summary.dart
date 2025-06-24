@@ -1,4 +1,3 @@
-// à ajouter dans manifest.dart ou créer photo_summary.dart
 import 'package:json_annotation/json_annotation.dart';
 
 part 'photo_summary.g.dart';

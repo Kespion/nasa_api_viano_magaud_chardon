@@ -23,7 +23,10 @@ class NasaApiService {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      return (json['photos'] as List).map((e) => Photo.fromJson(e)).toList();
+      return (json['photos'] as List)
+          .where((e) => e['img_src'] != null)
+          .map((e) => Photo.fromJson(e))
+          .toList();
     } else {
       throw Exception('Erreur de récupération des photos');
     }

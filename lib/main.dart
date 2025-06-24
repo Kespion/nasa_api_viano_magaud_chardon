@@ -18,7 +18,7 @@ class MarsRoverApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Mars Rover Photos',
         theme: ThemeData(primarySwatch: Colors.deepOrange),
-        home: const LoadingPage(),
+        home: const LoadingPage("Curiosity"),
       ),
     );
   }

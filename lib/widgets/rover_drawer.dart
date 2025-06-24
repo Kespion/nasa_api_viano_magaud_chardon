@@ -12,11 +12,15 @@ class RoverDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.deepOrange),
-            child: Text("Choisissez un rover", style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Column(
+              children: [
+                Icon(Icons.rocket_launch, size: 50, color: Colors.pink),
+                Text("Mars Rovers", style: TextStyle(color: Colors.black, fontSize: 24)),
+              ],
+            ),
           ),
           ...["Curiosity", "Opportunity", "Spirit"].map((rover) => ListTile(
-            title: Text(rover),
+            title: Text(rover, style: TextStyle(color: Colors.black, fontSize: 24),),
             onTap: () async {
               final provider = Provider.of<RoverProvider>(context, listen: false);
               Navigator.pop(context);
