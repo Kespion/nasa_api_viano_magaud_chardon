@@ -3,7 +3,6 @@ import 'package:nasa_api_viano_magaud_chardon/widgets/custom_list_tile.dart';
 import 'package:nasa_api_viano_magaud_chardon/widgets/rover_card/rover_card.dart';
 import 'package:provider/provider.dart';
 import '../providers/rover_provider.dart';
-import 'photos_page.dart';
 import '../widgets/rover_drawer.dart';
 
 class HomePage extends StatefulWidget {
